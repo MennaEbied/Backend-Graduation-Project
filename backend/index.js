@@ -107,6 +107,39 @@ app.post("/upload", async (req, res) => {
   }
 });
 
+// NEW: Endpoint to check a plate number string
+app.post("/checkPlate", async (req, res) => {
+  try {
+    const { plateNumber } = req.body;
+
+    if (!plateNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a plateNumber string in the request body.",
+      });
+    }
+    
+    // Sanitize the input string using the existing cleaning function
+    const cleanedPlate = cleanPlateNumber(plateNumber);
+    console.log(`Checking plate string: ${plateNumber} -> ${cleanedPlate}`);
+
+    const isReserved = await checkReservation(cleanedPlate);
+
+    res.status(200).json({
+      success: true,
+      isReserved,
+      accessGranted: isReserved,
+    });
+  } catch (error) {
+    console.error("❌ checkPlate Error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+});
+
+
 // Image preprocessing
 async function preprocessImage(imageBuffer) {
   try {
@@ -137,9 +170,9 @@ async function recognizePlateNumber(imageBuffer) {
       console.log(`🔍 Trying OCR with ${strategy.name}`);
       const result = await strategy.fn(imageBuffer);
       const cleaned = cleanPlateNumber(result);
-        if (validatePlateNumber(cleaned)) {
-         return cleaned;
-      } 
+      if (validatePlateNumber(cleaned)) {
+        return cleaned;
+      }
     } catch (error) {
       console.warn(`${strategy.name} failed:`, error.message);
       lastError = error;
@@ -234,4 +267,5 @@ async function checkReservation(plateNumber) {
 app.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
   console.log(`📥 Upload endpoint: POST http://localhost:${port}/upload`);
+  console.log(`📥 Check Plate endpoint: POST http://localhost:${port}/checkPlate`);
 });
