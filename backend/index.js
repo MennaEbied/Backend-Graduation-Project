@@ -72,7 +72,7 @@ app.post("/upload", async (req, res) => {
     if (req.files?.image) {
       const image = req.files.image;
       console.log(
-        `📷 Processing uploaded file: ${image.name} (${image.size} bytes)`,
+        `📷 Processing uploaded file: ${image.name} (${image.size} bytes)`
       );
       imageBuffer = image.data;
     } else if (req.body?.imageUrl) {
@@ -118,7 +118,7 @@ app.post("/checkPlate", async (req, res) => {
         message: "Please provide a plateNumber string in the request body.",
       });
     }
-    
+
     // Sanitize the input string using the existing cleaning function
     const cleanedPlate = cleanPlateNumber(plateNumber);
     console.log(`Checking plate string: ${plateNumber} -> ${cleanedPlate}`);
@@ -139,7 +139,6 @@ app.post("/checkPlate", async (req, res) => {
   }
 });
 
-
 // Image preprocessing
 async function preprocessImage(imageBuffer) {
   try {
@@ -159,8 +158,8 @@ async function preprocessImage(imageBuffer) {
 async function recognizePlateNumber(imageBuffer) {
   const strategies = [
     { name: "OCR.space", fn: recognizeWithOCRSpace },
-    { name: "Google Vision", fn: recognizeWithGoogleVision },
-    { name: "Tesseract", fn: recognizeWithTesseract },
+    // { name: "Google Vision", fn: recognizeWithGoogleVision },
+    // { name: "Tesseract", fn: recognizeWithTesseract },
   ];
 
   let lastError;
@@ -199,7 +198,7 @@ async function recognizeWithOCRSpace(imageBuffer) {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         timeout: 30000,
-      },
+      }
     );
 
     const parsedText = response.data.ParsedResults?.[0]?.ParsedText;
@@ -267,5 +266,7 @@ async function checkReservation(plateNumber) {
 app.listen(port, () => {
   console.log(`🚀 Server running on port ${port}`);
   console.log(`📥 Upload endpoint: POST http://localhost:${port}/upload`);
-  console.log(`📥 Check Plate endpoint: POST http://localhost:${port}/checkPlate`);
+  console.log(
+    `📥 Check Plate endpoint: POST http://localhost:${port}/checkPlate`
+  );
 });
