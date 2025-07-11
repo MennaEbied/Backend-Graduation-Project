@@ -94,8 +94,8 @@ app.post("/upload", async (req, res) => {
       success: true,
       plateNumber,
       isReserved,
-      accessGranted: isReserved,
-      processingTime: `${processingTime}ms`,
+      //accessGranted: isReserved,
+      //processingTime: `${processingTime}ms`,
     });
   } catch (error) {
     console.error("❌ Upload Error:", error.message);
@@ -128,7 +128,7 @@ app.post("/checkPlate", async (req, res) => {
     res.status(200).json({
       success: true,
       isReserved,
-      accessGranted: isReserved,
+      //accessGranted: isReserved,
     });
   } catch (error) {
     console.error("❌ checkPlate Error:", error.message);
@@ -169,9 +169,10 @@ async function recognizePlateNumber(imageBuffer) {
       console.log(`🔍 Trying OCR with ${strategy.name}`);
       const result = await strategy.fn(imageBuffer);
       const cleaned = cleanPlateNumber(result);
-      if (validatePlateNumber(cleaned)) {
-        return cleaned;
-      }
+      return cleaned;
+      // if (validatePlateNumber(cleaned)) {
+      // return cleaned;
+      //}
     } catch (error) {
       console.warn(`${strategy.name} failed:`, error.message);
       lastError = error;
@@ -255,7 +256,7 @@ async function checkReservation(plateNumber) {
   const snapshot = await db
     .collection("reservations")
     .where("plateNumber", "==", plateNumber)
-    .where("expiryTime", ">", new Date())
+    //.where("expiryTime", ">", new Date())
     .limit(1)
     .get();
 

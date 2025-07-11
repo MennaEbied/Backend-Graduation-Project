@@ -4,8 +4,7 @@ const fs = require("fs");
 const FormData = require("form-data");
 
 const SERVER_URL = "http://localhost:5000/upload";
-const IMAGE_PATH = "C:/Users/Dreams/333.jpg";
-
+const IMAGE_PATH = "C:/Users/10/Desktop/test2.png";
 
 async function testUpload() {
   try {
